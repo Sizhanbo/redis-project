@@ -86,5 +86,46 @@ class RedisDemoApplicationTests {
         ops.values("user:info:1001").forEach(System.out::println);
         ops.entries("user:info:1001").forEach((key, value)-> System.out.println(key + ":" + value));
     }
-}
+    //测试list类型
+    @Test
+    public void testList() {
+        //获取操作list类型的对象
+        ListOperations ops = redisTemplate.opsForList();
+        //左推一个元素
+        ops.leftPush("list","Hello");
+        //左推多个元素
+        ops.leftPushAll("list","Java","C++","Python","AI");
+        //元素个数
+        Long count = ops.size("list");
+        System.out.println("count = " + count);
+        //List<String> list = ops.rightPop("list", 1);
+        //System.out.println("list = " + list);
+        //System.out.println(ops.rightPop("list"));
+        //System.out.println(ops.rightPop("list"));
+        //System.out.println(ops.rightPop("list"));
+        //System.out.println(ops.rightPop("list"));
+        //System.out.println(ops.rightPop("list"));
+        //遍历
+        ops.range("list", 0, -1).forEach(System.out::println);
+        ops.remove("list",1,"AI");
+        System.out.println("---------");
+        ops.range("list", 0, -1).forEach(System.out::println);
+    }
 
+    //测试zset类型
+    @Test
+    public void testZset() {
+        //1.获取操作zset类型的对象
+        ZSetOperations ops = redisTemplate.opsForZSet();
+        //2.存储数据
+        ops.add("shop.price", "computer",100.0);
+        ops.add("shop.price", "phone",80.0);
+        ops.add("shop.price", "car",1000.0);
+        ops.add("shop.price", "ipad",50.0);
+
+        //2.取数据(默认按照分值的升序排序)
+        ops.range("shop.price",0,-1).forEach(System.out::println);
+        System.out.println("-----------");
+        ops.rangeByScore("shop.price",80,100).forEach(System.out::println);
+    }
+}
